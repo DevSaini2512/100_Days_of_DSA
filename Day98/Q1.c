@@ -1,25 +1,23 @@
+#include <stdio.h>
 #include <stdlib.h>
 
 int cmp(const void* a, const void* b) {
-    return (*(int**)a)[0] - (*(int**)b)[0];
+    return ((int*)a)[0] - ((int*)b)[0];
 }
 
-int** merge(int** intervals, int intervalsSize, int* intervalsColSize,
-            int* returnSize, int** returnColumnSizes) {
+int main() {
+    int intervals[][2] = {{1,3},{2,6},{8,10},{15,18}};
+    int n = 4;
 
-    qsort(intervals, intervalsSize, sizeof(int*), cmp);
+    qsort(intervals, n, sizeof(intervals[0]), cmp);
 
-    int** res = (int**)malloc(intervalsSize * sizeof(int*));
-    *returnColumnSizes = (int*)malloc(intervalsSize * sizeof(int));
-
+    int res[1000][2];
     int idx = 0;
 
-    for(int i = 0; i < intervalsSize; i++) {
+    for(int i = 0; i < n; i++) {
         if(idx == 0 || res[idx-1][1] < intervals[i][0]) {
-            res[idx] = (int*)malloc(2 * sizeof(int));
             res[idx][0] = intervals[i][0];
             res[idx][1] = intervals[i][1];
-            (*returnColumnSizes)[idx] = 2;
             idx++;
         } else {
             if(intervals[i][1] > res[idx-1][1]) {
@@ -28,6 +26,9 @@ int** merge(int** intervals, int intervalsSize, int* intervalsColSize,
         }
     }
 
-    *returnSize = idx;
-    return res;
+    for(int i = 0; i < idx; i++) {
+        printf("[%d,%d] ", res[i][0], res[i][1]);
+    }
+
+    return 0;
 }
